@@ -11,7 +11,7 @@ using a MapReduce Approach. Computers in Biology and Medicine,
 ### data
 Contains two text files serve as sample input to the Hadoop program.
 
-#### ligand_small.txt 
+* ligand_small.txt 
 Contains 10 lig
 and conformtions, one conformation per line. Each line is in the 
 format of [ligand_id x1 y1 z1 x2 y2 z2 … xN yN ZN energy rmsd], in which 
@@ -21,26 +21,27 @@ conformation energy, and rmsd is the RMSD from the crystal structure in LPDB.
 From a representation point of view, ligand_id is represented as the string 
 type and the others values in each line are represented as the double type.
 
-#### ligand_1a9u.txt contains 76889 ligand conformations with the same format.
+* ligand_1a9u.txt 
+Contains 76889 ligand conformations with the same format.
 
 ### src
 Contains the source files for the program.
 
-#### Driver.java
+* Driver.java
 Contains the main function, parses the command line input, sets the parameters 
 that control the program behavior, calls map and reduce functions.
 
-#### LRandKeyMapper.java
+* LRandKeyMapper.java
 Contains the map function that transforms ligand conformations to 3-D metadata 
 points using projection and linear interpulation.
 
-#### LRandKeyReducer.java
+* LRandKeyReducer.java
 Contains the identify reduce function.
 
-#### OctreeClusteringMapper.java
+* OctreeClusteringMapper.java
 Contains the map function that search one level of the octree for dense octants.
 
-#### OctreeClusteringReducer.java
+* OctreeClusteringReducer.java
 Contains the reduce function that computes the global densities of all the 
 octants in one specific level of the octree.
 
@@ -56,65 +57,60 @@ GNU/Linux
 
 ### Compilation instructions using Eclipse
 
-1. Create a new project in Eclipse:
+* Create a new project in Eclipse:
 Open Eclipse => File => New Java Project => Give a project name (e.g.: 
 Octree_Clustering) => Next => Click on the tab “Libraries” => Add External Jars 
 => Navigate to the dir “/path/to/hadoop-2.4.0” => Add following jars:
-- ~/hadoop-2.4.0/share/hadoop/common/hadoop-common-2.4.0.jar
-- ~/hadoop-2.4.0/share/hadoop/hdfs/hadoop-hdfs-2.4.0.jar
-- ~/hadoop-2.4.0/share/hadoop/mapreduce/*.jar
-- ~/hadoop-2.4.0/share/hadoop/yarn/*jar
+```
+ ~/hadoop-2.4.0/share/hadoop/common/hadoop-common-2.4.0.jar
+ ~/hadoop-2.4.0/share/hadoop/hdfs/hadoop-hdfs-2.4.0.jar
+ ~/hadoop-2.4.0/share/hadoop/mapreduce/*.jar
+ ~/hadoop-2.4.0/share/hadoop/yarn/*jar
+```
 => Finish.
 
-2. Copy the source files in the src directory which the Eclipse project creats, 
+* Copy the source files in the src directory which the Eclipse project creats, 
 and refresh the project in Eclipse.
 
 You should see the source files from Eclipse.
 
 ### Compilation instructions using command line
 The following instructions are tested against hadoop-2.4.0.
-1. Export CLASSPATH
+
+* Export CLASSPATH
 ```
 [hadoop@localhost Octree_Clustering]$ export CLASSPATH=`yarn classpath`
 ```
-2. Compile java files
+* Compile java files
 ```
 [hadoop@localhost Octree_Clustering]$ javac -classpath $CLASSPATH -d . *java
 ```
-3. Make the jar file
+* Make the jar file
 ```
 [hadoop@localhost Octree_Clustering]$ jar cvf octree.jar *class
 ```
 
 ### Execution instructions 
 
-1. Create a jar file:
+* Create a jar file:
 Change directory to the Octree_Clustering, run the command:
 ```
 [hadoop@localhost Octree_Clustering]$ jar cvf octree.jar -C bin .
-```
-
-You should see the output:
-```
 added manifest
 adding: LRandKeyReducer.class(in = 2076) (out= 774)(deflated 62%)
 adding: Driver.class(in = 3006) (out= 1624)(deflated 45%)
 adding: LRandKeyMapper.class(in = 4636) (out= 2385)(deflated 48%)
 ```
 
-2. Copy the octree.jar to the hadoop installation dir:
+* Copy the octree.jar to the hadoop installation dir:
 ```
 [hadoop@localhost Octree_Clustering]$ cp octree.jar ~/hadoop-2.4.0
 ```
 
-3. Start the hadoop daemons & hadoop job history server from the 
+* Start the hadoop daemons & hadoop job history server from the 
 hadoop installation dir:
 ```
 [hadoop@localhost hadoop-2.4.0]$ sbin/start-all.sh
-```
-
-You should see the output:
-```
 This script is Deprecated. Instead use start-dfs.sh and start-yarn.sh
 14/05/27 10:10:00 WARN util.NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
 Starting namenodes on [localhost]
@@ -129,13 +125,9 @@ localhost: starting nodemanager, logging to /home/hadoop/hadoop-2.4.0/logs/yarn-
 [hadoop@localhost hadoop-2.4.0]$ sbin/mr-jobhistory-daemon.sh start historyserver
 starting historyserver, logging to /home/hadoop/hadoop-2.4.0/logs/mapred-hadoop-historyserver-localhost.localdomain.out
 ```
-4. Verify that everything starts successfully:
+* Verify that everything starts successfully:
 ```
 [hadoop@localhost hadoop-2.4.0]$ jps
-```
-
-You will see the output:
-```
 3626 NodeManager
 3403 SecondaryNameNode
 3255 DataNode
@@ -145,7 +137,7 @@ You will see the output:
 3958 JobHistoryServer
 ```
 
-5. Put the ligand_small.txt input to hdfs:
+* Put the ligand_small.txt input to hdfs:
 ```
 [hadoop@localhost hadoop-2.4.0]$ bin/hdfs dfs -mkdir /input
 14/05/29 04:01:47 WARN util.NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
@@ -153,7 +145,7 @@ You will see the output:
 14/05/29 04:02:16 WARN util.NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
 ```
 
-6. Run the octree clustering program:
+* Run the octree clustering program:
 ```
 [hadoop@localhost hadoop-2.4.0]$ bin/hadoop jar octree.jar Driver -input /input -output /output -octant_size 2 -ini_level 8 -num_reduce_1 2 -num_reduce_2 1
 
@@ -162,15 +154,15 @@ Note: “-input /input” specifies the input path in hdfs, “-output /output�
 
 You will see information on 5 MapReduce jobs from the standard output.
 
-7. Copy the results from hdfs to local disk: 
+* Copy the results from hdfs to local disk: 
 ```
 [hadoop@localhost hadoop-2.4.0]$ bin/hdfs dfs -copyToLocal /output .
 ```
-8. Check out the output in output dir (local):
+* Check out the output in output dir (local):
 ```
 [hadoop@localhost hadoop-2.4.0]$ cat output/output0/part-r-00000
 ```
-9. Rerun the octree.jar with a larger input dataset ligand_1a9u.txt:
+* Rerun the octree.jar with a larger input dataset ligand_1a9u.txt:
 
 Note: if you wish to use the /output on hdfs as the output of the program running on 1a9u.txt, you need to remove the /output dir from hdfs before to rerun. Or you can simply let the output of running on 1a9u.txt to another directory on hdfs, for example /output_1a9u.
 
