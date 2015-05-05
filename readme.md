@@ -12,8 +12,8 @@ using a MapReduce Approach. Computers in Biology and Medicine,
 Contains two text files serve as sample input to the Hadoop program.
 
 * ligand_small.txt 
-Contains 10 lig
-and conformtions, one conformation per line. Each line is in the 
+
+Contains 10 ligand conformtions, one conformation per line. Each line is in the 
 format of [ligand_id x1 y1 z1 x2 y2 z2 … xN yN ZN energy rmsd], in which 
 ligand_id is the ligand conformation ID, x1 y1 z1 x2 y2 z2 … xN yN ZN are the 
 coordinates in the Cartesian space of the N ligand atoms, energy is the 
@@ -22,26 +22,32 @@ From a representation point of view, ligand_id is represented as the string
 type and the others values in each line are represented as the double type.
 
 * ligand_1a9u.txt 
+
 Contains 76889 ligand conformations with the same format.
 
 ### src
 Contains the source files for the program.
 
 * Driver.java
+
 Contains the main function, parses the command line input, sets the parameters 
 that control the program behavior, calls map and reduce functions.
 
 * LRandKeyMapper.java
+
 Contains the map function that transforms ligand conformations to 3-D metadata 
 points using projection and linear interpulation.
 
 * LRandKeyReducer.java
+
 Contains the identify reduce function.
 
 * OctreeClusteringMapper.java
+
 Contains the map function that search one level of the octree for dense octants.
 
 * OctreeClusteringReducer.java
+
 Contains the reduce function that computes the global densities of all the 
 octants in one specific level of the octree.
 
@@ -164,7 +170,7 @@ You will see information on 5 MapReduce jobs from the standard output.
 ```
 * Rerun the octree.jar with a larger input dataset ligand_1a9u.txt:
 
-Note: if you wish to use the /output on hdfs as the output of the program running on 1a9u.txt, you need to remove the /output dir from hdfs before to rerun. Or you can simply let the output of running on 1a9u.txt to another directory on hdfs, for example /output_1a9u.
+Note: if you wish to use the /output on hdfs as the output of the program running on ligand_1a9u.txt, you need to remove the /output dir from hdfs before to rerun. Or you can simply let the output of running on 1a9u.txt to another directory on hdfs, for example /output_1a9u.
 
 
 
